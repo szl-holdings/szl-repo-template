@@ -1,0 +1,13 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it using the metadata from this file."
+type: software
+title: "[[FILL: repository title]]"
+abstract: "[[FILL: one sentence on what this repository does]]"
+authors:
+  - family-names: "[[FILL: family name]]"
+    given-names: "[[FILL: given names]]"
+    affiliation: "SZL Holdings"
+repository-code: "https://github.com/szl-holdings/[[FILL: repository name]]"
+license: Apache-2.0
+version: "[[FILL: version, e.g. 0.1.0]]"
+date-released: "[[FILL: YYYY-MM-DD]]"
