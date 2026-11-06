@@ -1,0 +1,19 @@
+# Python bytecode and tool caches: regenerated on every run, never source.
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Default fixture folder of scripts/test_repo_hygiene_check.py (REPO_HYGIENE_SCRATCH unset).
+scripts/_hygiene_scratch/
+
+# Virtual environments, build outputs and local secrets.
+.venv/
+venv/
+build/
+dist/
+*.egg-info/
+.env
