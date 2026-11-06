@@ -16,8 +16,9 @@ This is intended: a new repository cannot pass until its owner has filled them i
 repository itself (GitHub reports it as a template) the workflow does not run that step. It runs a
 template self-check instead, which requires exactly that outcome: exit 1, with `placeholders` as the
 only failing guard. The template's own CI therefore fails if its skeleton stops satisfying any other
-guard, or if its placeholders are filled in by mistake. Repositories created from the template skip
-the self-check and run the real check.
+guard, or if every placeholder is filled in by mistake. It does not catch a partial fill: while any
+placeholder is left, `placeholders` still fails, which is the outcome the self-check accepts.
+Repositories created from the template skip the self-check and run the real check.
 
 Exit codes: 0 all guards passed; 1 at least one guard failed; 2 internal error or bad usage.
 The workflow runs the checker's own self-tests first, so a weakened checker fails CI before it
