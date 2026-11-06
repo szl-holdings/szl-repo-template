@@ -30,5 +30,31 @@ jobs:
       - name: Repository hygiene check (fail-closed)
         # Skipped only in the template repository itself, whose placeholders are meant to fail.
         # Repositories created from the template have is_template false, so the check runs there.
+        # The template is checked by the next step instead.
         if: ${{ !github.event.repository.is_template }}
         run: python -I -B scripts/repo_hygiene_check.py .
+      - name: Template self-check (template repository only)
+        # As shipped, the template must fail the gate in exactly one way (docs/TEMPLATE.md): exit 1,
+        # with `placeholders` as the only failing guard. Any other result means the skeleton itself is
+        # broken, and every repository created from it would start from that break.
+        if: ${{ github.event.repository.is_template }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          report="$RUNNER_TEMP/repo-hygiene-template.json"
+          if python -I -B scripts/repo_hygiene_check.py . --json > "$report"; then code=0; else code=$?; fi
+          python -I -B - "$report" "$code" <<'PY'
+          import json, sys
+          code = int(sys.argv[2])
+          try:
+              with open(sys.argv[1], encoding="utf-8") as fh:
+                  guards = json.load(fh)["guards"]
+          except (OSError, ValueError, KeyError) as exc:
+              sys.exit(f"template self-check FAILED: no usable --json report (checker exit {code}): {exc}")
+          for name, result in guards.items():
+              print(f"{result['status']:5} {name}: {result['detail']}")
+          failing = sorted(name for name, result in guards.items() if result["status"] != "PASS")
+          if code != 1 or failing != ["placeholders"]:
+              sys.exit(f"template self-check FAILED: expected exit 1 with only 'placeholders' failing; got exit {code}, failing {failing}")
+          print("template self-check OK: exit 1, and placeholders is the only failing guard")
+          PY

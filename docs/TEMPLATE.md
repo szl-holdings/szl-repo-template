@@ -12,9 +12,12 @@
 6. Run the check locally: `python -I -B scripts/repo_hygiene_check.py .` (add `--json` for machine output).
 
 As shipped, the template fails the check with exit 1, because the placeholders are still there.
-This is intended: a new repository cannot pass until its owner has filled them in. The workflow
-skips that one step in the template repository itself (GitHub reports it as a template), so the
-template's own CI stays green while still running the checker's self-tests.
+This is intended: a new repository cannot pass until its owner has filled them in. In the template
+repository itself (GitHub reports it as a template) the workflow does not run that step. It runs a
+template self-check instead, which requires exactly that outcome: exit 1, with `placeholders` as the
+only failing guard. The template's own CI therefore fails if its skeleton stops satisfying any other
+guard, or if its placeholders are filled in by mistake. Repositories created from the template skip
+the self-check and run the real check.
 
 Exit codes: 0 all guards passed; 1 at least one guard failed; 2 internal error or bad usage.
 The workflow runs the checker's own self-tests first, so a weakened checker fails CI before it
