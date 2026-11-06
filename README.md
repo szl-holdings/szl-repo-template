@@ -42,3 +42,7 @@ Every claim in this README, and in reports produced from this repository, carrie
 CITATION.cff, the Limitations section, this data-boundary section, the
 LICENSE and the dependency locks are all present, and every template
 placeholder has been filled. See `docs/TEMPLATE.md` and `docs/LOCKFILES.md`.
+
+## Relation to the estate
+
+Part of the [SZL Holdings](https://github.com/szl-holdings) GitHub estate; models, datasets and Spaces are published under the [SZLHOLDINGS](https://huggingface.co/SZLHOLDINGS) Hugging Face org.
