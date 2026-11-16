@@ -1,0 +1,38 @@
+# Standard Cloudflare Worker deploy lane for SZL estate repos.
+# Doctrine: GitHub Actions is the ONLY deploy path (protected main + CF secrets);
+# no local CF tokens; one worker per service-bearing repo; worker names prefixed szl-;
+# monetized endpoints sit behind the estate x402 wall, never per-worker payment rails.
+name: Deploy Cloudflare Worker (standard lane)
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Validate without deploying'
+        required: false
+        default: 'true'
+permissions:
+  contents: read
+concurrency:
+  group: deploy-worker
+  cancel-in-progress: false
+jobs:
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install wrangler
+        run: npm install -g wrangler@latest
+      - name: Dry-run validate
+        if: ${{ inputs.dry_run == 'true' }}
+        run: wrangler deploy --dry-run --config cloudflare/wrangler.jsonc
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      - name: Deploy
+        if: ${{ inputs.dry_run != 'true' }}
+        run: wrangler deploy --config cloudflare/wrangler.jsonc
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
